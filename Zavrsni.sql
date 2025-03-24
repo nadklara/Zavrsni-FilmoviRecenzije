@@ -1,5 +1,12 @@
 ﻿--create database FilmoviRecenzije;
 
+--drop table FilmoviGlumci
+--drop table Glumci 
+--drop table Recenzije 
+--drop table Korisnici 
+--drop table Filmovi 
+--drop table Kategorije 
+
 create table Kategorije (
 sifra int primary key identity (1,1),
 naziv varchar (100) not null
@@ -8,7 +15,7 @@ naziv varchar (100) not null
 create table Filmovi (
 sifra int primary key identity (1,1),
 naziv varchar (50) not null,
-godina_izlaska int,
+godinaIzlaska int,
 trajanje int,
 opis varchar (1000),
 kategorija int references Kategorije (sifra),
@@ -17,13 +24,16 @@ slika varchar(max)
 
 create table Glumci (
 sifra int primary key identity (1,1),
-glumac varchar (150) not null
+ime varchar (50) not null,
+prezime varchar (50) not null,
+godinaRodenja int check(godinaRodenja between 1900 and 3000)
 );
 
 create table FilmoviGlumci (
-film_sifra int references Filmovi (sifra),
-glumac_sifra int references Glumci (sifra)
-);
+sifra int primary key identity (1,1),
+filmSifra int references Filmovi (sifra),
+glumacSifra int references Glumci (sifra)
+)
 
 create table Korisnici (
 sifra int primary key identity (1,1),
@@ -35,8 +45,8 @@ administrator bit not null default 0,
 
 create table Recenzije (
 sifra int primary key identity (1,1),
-film_sifra int references Filmovi (sifra),
-korisnik_sifra int references Korisnici (sifra),
+filmSifra int references Filmovi (sifra),
+korisnikSifra int references Korisnici (sifra),
 ocjena decimal (3,1) check (ocjena >= 1 and ocjena <=10),
 recenzija text,
 datum datetime
@@ -44,38 +54,36 @@ datum datetime
 
 select * from Glumci;
 
-insert into Glumci (glumac) values
-('Leonardo DiCaprio'),
-('Christian Bale'),
-('Matthew McConaughey'),
-('Kate Winslet'),
-('Marlon Brando'),
-('John Travolta'),
-('Keanu Reeves'),
-('Tom Hanks'),
-('Russell Crowe'),
-('Zoe Saldana'),
-('Robert Downey Jr.'),
-('Sam Neill'),
-('Matthew Broderick'),
-('Liam Neeson'),
-('Heath Ledger'),
-('Brad Pitt'),
-('Tom Hardy'),
-('Joaquin Phoenix'),
-('Emma Stone'),
-('Song Kang-ho'),
-('Jared Leto'),
-('Scarlett Johansson'),
-('James McAvoy'),
-('Sally Hawkins'),
-('Leonardo DiCaprio'),
-('Harrison Ford'),
-('Al Pacino'),
-('Angelina Jolie'),
-('Morgan Freeman'),
-('Will Smith');
-
+INSERT INTO Glumci (ime, prezime, godinaRodenja) VALUES 
+('Leonardo', 'DiCaprio', 1974),			--1
+('Christian', 'Bale', 1974),		    --2
+('Matthew', 'McConaughey', 1969),		--3
+('Kate', 'Winslet', 1975),				--4
+('Marlon', 'Brando', 1924),				--5
+('John', 'Travolta', 1954),				--6
+('Keanu', 'Reeves', 1964),				--7
+('Tom', 'Hanks', 1956),					--8
+('Russell', 'Crowe', 1964),				--9
+('Zoe', 'Saldana', 1978),				--10
+('Robert', 'Downey Jr.', 1965),			--11
+('Sam', 'Neill', 1947),					--12
+('Matthew', 'Broderick', 1962),			--13
+('Liam', 'Neeson', 1952),				--14
+('Heath', 'Ledger', 1979),				--15
+('Brad', 'Pitt', 1963),					--16
+('Tom', 'Hardy', 1977),					--17
+('Joaquin', 'Phoenix', 1974),			--18
+('Emma', 'Stone', 1988),				--19
+('Song', 'Kang-ho', 1967),				--20
+('Jared', 'Leto', 1971),				--21
+('Scarlett', 'Johansson', 1984),		--22
+('James', 'McAvoy', 1979),				--23
+('Sally', 'Hawkins', 1976),				--24
+('Harrison', 'Ford', 1942),				--25
+('Al', 'Pacino', 1940),					--26
+('Angelina', 'Jolie', 1975),			--27
+('Morgan', 'Freeman', 1937),			--28
+('Will', 'Smith', 1968);				--29
 
 select * from Filmovi where kategorija = 1
 
@@ -91,7 +99,7 @@ insert into Kategorije (naziv) values
 
 select * from Filmovi;
 
-insert into Filmovi (naziv, godina_izlaska, kategorija, opis) values
+insert into Filmovi (naziv, godinaIzlaska, kategorija, opis) values
 ('Inception', 2010, 5, 'A mind-bending thriller about dreams within dreams and the power of the subconscious.'),
 ('The Dark Knight', 2008, 1, 'A gritty crime drama featuring Batman’s battle against the Joker in Gotham City.'),
 ('Interstellar', 2014, 5, 'A space epic that explores the survival of humanity and the bending of time and space.'),
@@ -148,7 +156,7 @@ insert into Filmovi (naziv, godina_izlaska, kategorija, opis) values
 
 select * from FilmoviGlumci;
 
-insert into FilmoviGlumci (film_sifra, glumac_sifra) values
+insert into FilmoviGlumci (filmSifra, glumacSifra) values
 (1, 1),  -- Inception - Leonardo DiCaprio
 (2, 2),  -- The Dark Knight - Christian Bale
 (3, 3),  -- Interstellar - Matthew McConaughey
@@ -173,12 +181,12 @@ insert into FilmoviGlumci (film_sifra, glumac_sifra) values
 (22, 22), -- Joker - Scarlett Johansson
 (23, 23), -- La La Land - James McAvoy
 (24, 24), -- Parasite - Sally Hawkins
-(25, 25), -- Django Unchained - Leonardo DiCaprio
-(26, 26), -- The Green Mile - Harrison Ford
-(27, 27), -- The Prestige - Al Pacino
-(28, 28), -- The Wolf of Wall Street - Angelina Jolie
-(29, 29), -- Whiplash - Morgan Freeman
-(30, 30); -- A Beautiful Mind - Will Smith
+(25, 1), -- Django Unchained - Leonardo DiCaprio
+(26, 25), -- The Green Mile - Harrison Ford
+(27, 26), -- The Prestige - Al Pacino
+(28, 27), -- The Wolf of Wall Street - Angelina Jolie
+(29, 28), -- Whiplash - Morgan Freeman
+(30, 29); -- A Beautiful Mind - Will Smith
 
 
 
@@ -236,7 +244,7 @@ insert into Korisnici (ime, email, lozinka, administrator) values
 
 select * from Recenzije;
 
-insert into Recenzije (film_sifra, korisnik_sifra, ocjena, recenzija, datum) values
+insert into Recenzije (filmSifra, korisnikSifra, ocjena, recenzija, datum) values
 (1, 5, 8.5, 'Sjajan zaplet i fantastična vizualna iskustva, ali bilo je teško ući u radnju.', '2025-03-20 12:30:00'),
 (1, 7, 9.5, 'Nevjerojatan film s nevjerojatnom pričom. Koncept snova unutar snova je briljantan.', '2025-03-20 13:00:00'),
 (1, 10, 7.0, 'Vizualno zapanjujuće, ali imala sam poteškoća s razumijevanjem radnje.', '2025-03-20 14:15:00'),
