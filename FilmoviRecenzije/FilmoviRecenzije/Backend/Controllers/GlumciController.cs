@@ -43,6 +43,34 @@ namespace FilmoviRecenzije.Backend.Controllers
             }
 
             return Ok(glumci);
+        }        
+        
+        [HttpGet]
+        [Route("film/{sifra:int}")]
+        public IActionResult DohvatiGlumcePoFilmu(int sifra)
+        {
+            if (sifra < 1)
+            {
+                return BadRequest(new { message = "Šifra nije validna" });
+            }
+
+            var glumci = _context.FilmoviGlumcis
+                .Where(fg => fg.FilmSifra == sifra)
+                .Join(_context.Glumcis,
+                    fg => fg.GlumacSifra,
+                    g => g.Sifra,
+                    (fg, g) => new
+                    {
+                        imeGlumca = g.Ime + " " + g.Prezime
+                    })
+                .ToList();
+
+            if (glumci == null)
+            {
+                return NotFound(new { message = "Glumci nisu pronađeni" });
+            }
+
+            return Ok(glumci);
         }
         
         [HttpGet]

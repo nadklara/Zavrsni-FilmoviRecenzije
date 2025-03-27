@@ -15,7 +15,7 @@ public class Filmovi : Entitet
 
     public string? Opis { get; set; }
 
-    [ForeignKey("Kategorije")] // Explicitly define the foreign key
+    [ForeignKey("Kategorije")] 
     public int? Kategorija { get; set; }
 
     public string? Slika { get; set; }

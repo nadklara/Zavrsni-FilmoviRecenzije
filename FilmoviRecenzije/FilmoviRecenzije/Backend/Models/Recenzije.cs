@@ -8,10 +8,10 @@ namespace API.Backend.Models;
 public class Recenzije : Entitet
 {
     [ForeignKey("Filmovi")]
-    public int? FilmSifra { get; set; }
+    public int FilmSifra { get; set; }
 
     [ForeignKey("Korisnici")]
-    public int? KorisnikSifra { get; set; }
+    public int KorisnikSifra { get; set; }
 
     public decimal? Ocjena { get; set; }
 

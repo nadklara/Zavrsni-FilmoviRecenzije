@@ -46,7 +46,25 @@ namespace FilmoviRecenzije.Backend.Controllers
         }
         
         [HttpGet]
-        [Route("Naziv/{text}")]
+        [Route("email/{email}")]
+        public IActionResult DohvatiKorisnika(String email)
+        {
+            if (email.Contains("%40"))
+            {
+                email = email.Replace("%40", "@");
+            }
+            var korisnici = _context.Korisnicis.Where(f => f.Email.Contains(email)).ToList();
+
+            if (!korisnici.Any())
+            {
+                return NotFound(new { message = "Korisnik nije pronađen" });
+            }
+
+            return Ok(korisnici);
+        }
+
+        [HttpGet]
+        [Route("naziv/{text}")]
         public IActionResult DohvatiKorisnik(String text)
         {
             var korisnici = _context.Korisnicis.Where(f => f.Ime.Contains(text)).ToList();
@@ -89,12 +107,19 @@ namespace FilmoviRecenzije.Backend.Controllers
                 return BadRequest(ModelState);
             }
 
+            if (_context.Korisnicis.Any(k => k.Email == korisnik.Email))
+            {
+                return BadRequest("Korisnik s tim emailom već postoji.");
+            }
+
+            string hashiranaLozinka = BCrypt.Net.BCrypt.HashPassword(korisnik.Lozinka);
+
             var noviKorisnik = new Korisnici
             {
-               Ime = korisnik.Ime,
-               Email = korisnik.Email,
-               Lozinka = korisnik.Lozinka,
-               Administrator = korisnik.Administrator
+                Ime = korisnik.Ime,
+                Email = korisnik.Email,
+                Lozinka = hashiranaLozinka,
+                Administrator = korisnik.Administrator
             };
 
             _context.Korisnicis.Add(noviKorisnik);
